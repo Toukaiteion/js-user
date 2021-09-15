@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hseea.jsuser.dao.UserMapper">
+    <resultMap id="menuResultMap" type="UserMenuDto">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="url" column="url"/>
+        <result property="priority" column="priority"/>
+        <result property="parentId" column="parent_id"/>
+    </resultMap>
+
+    <select id="findMenuByUsername" resultMap="menuResultMap" parameterType="string">
+        select menu.id,menu.user_id,menu.menu_name,menu.url,menu.parent_id,users.username,menu.priority
+        from users
+        left join user_menu menu on users.id = menu.user_id
+        where users.username = #{userName}
+    </select>
+
+</mapper>
