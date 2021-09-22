@@ -3,21 +3,35 @@
         PUBLIC "-//mybatis.org//DTD//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hseea.jsuser.dao.UserMapper">
-    <resultMap id="menuResultMap" type="UserMenuDto">
+    <resultMap id="menuResultMap" type="PermissionDto">
         <id property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="username" column="username"/>
-        <result property="menuName" column="menu_name"/>
+        <result property="resourceNameZh" column="resource_name_zh"/>
+        <result property="resourceType" column="resource_type"/>
         <result property="url" column="url"/>
         <result property="priority" column="priority"/>
         <result property="parentId" column="parent_id"/>
+        <result property="component" column="component"/>
     </resultMap>
 
-    <select id="findMenuByUsername" resultMap="menuResultMap" parameterType="string">
-        select menu.id,menu.user_id,menu.menu_name,menu.url,menu.parent_id,users.username,menu.priority
+    <select id="getPermissionIdsByUsername" resultType="integer">
+        select role_permission.permission_id
         from users
-        left join user_menu menu on users.id = menu.user_id
-        where users.username = #{userName}
+        left join user_role on users.id = user_role.user_id
+        left join role on user_role.role_id = role.id
+        left join role_permission on role.id = role_permission.role_id
+        where users.username = #{username}
+    </select>
+
+    <select id="findMenuByUsername" resultMap="menuResultMap" parameterType="java.util.Set">
+        select id,resource_name_zh,url,parent_id,resource_type,priority,component
+        from permission
+        where is_deleted = 0
+        <if test="set != null and set.size > 0">
+            and id in
+            <foreach collection="set" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
     </select>
 
 </mapper>

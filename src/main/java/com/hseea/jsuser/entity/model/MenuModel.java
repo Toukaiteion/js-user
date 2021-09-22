@@ -10,6 +10,8 @@ public class MenuModel implements Serializable {
     private int id;
     private String menuName;
     private String url;
+    private String component;
     private int priority;
     private List<MenuModel> subMenu;
+    private List<MenuModel> subElement;
 }
